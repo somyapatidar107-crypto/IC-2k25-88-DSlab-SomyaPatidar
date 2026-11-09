@@ -1,0 +1,142 @@
+
+#include <iostream>
+using namespace std;
+
+// Static Queue
+class StaticQueue {
+    int arr[100], front, rear;
+
+public:
+    StaticQueue() {
+        front = rear = -1;
+    }
+
+    void enqueue(int x) {
+        if (rear == 99) {
+            cout << "Queue Overflow\n";
+            return;
+        }
+
+        if (front == -1) front = 0;
+        arr[++rear] = x;
+        cout << "Inserted.\n";
+    }
+
+    void dequeue() {
+        if (front == -1 || front > rear) {
+            cout << "Queue Underflow\n";
+            front = rear = -1;
+            return;
+        }
+
+        cout << "Deleted: " << arr[front++] << endl;
+
+        if (front > rear)
+            front = rear = -1;
+    }
+
+    void display() {
+        if (front == -1) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+
+        for (int i = front; i <= rear; i++)
+            cout << arr[i] << " ";
+        cout << endl;
+    }
+};
+
+// Dynamic Queue
+struct Node {
+    int data;
+    Node* next;
+};
+
+class DynamicQueue {
+    Node *front, *rear;
+
+public:
+    DynamicQueue() {
+        front = rear = NULL;
+    }
+
+    void enqueue(int x) {
+        Node* n = new Node{x, NULL};
+
+        if (rear == NULL)
+            front = rear = n;
+        else {
+            rear->next = n;
+            rear = n;
+        }
+
+        cout << "Inserted.\n";
+    }
+
+    void dequeue() {
+        if (front == NULL) {
+            cout << "Queue Underflow\n";
+            return;
+        }
+
+        Node* temp = front;
+        cout << "Deleted: " << temp->data << endl;
+        front = front->next;
+
+        if (front == NULL)
+            rear = NULL;
+
+        delete temp;
+    }
+
+    void display() {
+        Node* temp = front;
+
+        if (temp == NULL) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    StaticQueue s;
+    DynamicQueue d;
+    int type, choice, value;
+
+    cout << "1. Static Queue\n2. Dynamic Queue\nChoose: ";
+    cin >> type;
+
+    do {
+        cout << "\n1. Enqueue\n2. Dequeue\n3. Display\n0. Exit\nChoice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value: ";
+                cin >> value;
+                if (type == 1) s.enqueue(value);
+                else if (type == 2) d.enqueue(value);
+                break;
+
+            case 2:
+                if (type == 1) s.dequeue();
+                else if (type == 2) d.dequeue();
+                break;
+
+            case 3:
+                if (type == 1) s.display();
+                else if (type == 2) d.display();
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}

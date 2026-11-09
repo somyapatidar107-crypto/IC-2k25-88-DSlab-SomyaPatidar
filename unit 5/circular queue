@@ -1,0 +1,88 @@
+
+#include <iostream>
+using namespace std;
+
+class CircularQueue {
+    int arr[100];
+    int front, rear, size;
+
+public:
+    CircularQueue() {
+        front = rear = -1;
+        size = 100;
+    }
+
+    void enqueue(int x) {
+        if ((rear + 1) % size == front) {
+            cout << "Queue is full.\n";
+            return;
+        }
+
+        if (front == -1)
+            front = 0;
+
+        rear = (rear + 1) % size;
+        arr[rear] = x;
+
+        cout << "Inserted.\n";
+    }
+
+    void dequeue() {
+        if (front == -1) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+
+        cout << "Deleted: " << arr[front] << endl;
+
+        if (front == rear)
+            front = rear = -1;
+        else
+            front = (front + 1) % size;
+    }
+
+    void display() {
+        if (front == -1) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+
+        int i = front;
+
+        while (true) {
+            cout << arr[i] << " ";
+            if (i == rear) break;
+            i = (i + 1) % size;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    CircularQueue q;
+    int choice, value;
+
+    do {
+        cout << "\n1. Enqueue\n2. Dequeue\n3. Display\n0. Exit";
+        cout << "\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value: ";
+                cin >> value;
+                q.enqueue(value);
+                break;
+
+            case 2:
+                q.dequeue();
+                break;
+
+            case 3:
+                q.display();
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
