@@ -1,0 +1,100 @@
+
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+struct Node {
+    char data;
+    Node *left, *right;
+
+    Node(char value) {
+        data = value;
+        left = right = NULL;
+    }
+};
+
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' ||
+           c == '/' || c == '^';
+}
+
+Node* buildTree(string postfix) {
+    stack<Node*> st;
+
+    for (char c : postfix) {
+        if (c == ' ') continue;
+
+        Node* node = new Node(c);
+
+        if (isOperator(c)) {
+            if (st.size() < 2) {
+                cout << "Invalid postfix expression.\n";
+                return NULL;
+            }
+
+            node->right = st.top();
+            st.pop();
+
+            node->left = st.top();
+            st.pop();
+        }
+
+        st.push(node);
+    }
+
+    if (st.size() != 1) {
+        cout << "Invalid postfix expression.\n";
+        return NULL;
+    }
+
+    return st.top();
+}
+
+void preorder(Node* root) {
+    if (!root) return;
+    cout << root->data << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void inorder(Node* root) {
+    if (!root) return;
+
+    if (isOperator(root->data)) cout << "(";
+    inorder(root->left);
+    cout << root->data;
+    inorder(root->right);
+    if (isOperator(root->data)) cout << ")";
+}
+
+void postorder(Node* root) {
+    if (!root) return;
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->data << " ";
+}
+
+int main() {
+    string postfix;
+
+    cout << "Enter postfix expression (single-character operands): ";
+    getline(cin, postfix);
+
+    Node* root = buildTree(postfix);
+
+    if (root) {
+        cout << "Infix expression: ";
+        inorder(root);
+
+        cout << "\nPrefix: ";
+        preorder(root);
+
+        cout << "\nPostfix: ";
+        postorder(root);
+
+        cout << endl;
+    }
+
+    return 0;
+}
