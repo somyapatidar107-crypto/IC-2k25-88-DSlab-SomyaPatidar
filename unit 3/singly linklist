@@ -1,0 +1,149 @@
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+Node* head = NULL;
+
+void insertAtPosition(int value, int pos) {
+    Node* newNode = new Node{value, NULL};
+
+    if (pos <= 1 || head == NULL) {
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    for (int i = 1; i < pos - 1 && temp->next != NULL; i++)
+        temp = temp->next;
+
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+void deleteAtPosition(int pos) {
+    if (head == NULL) {
+        cout << "List is empty.\n";
+        return;
+    }
+
+    Node* temp = head;
+
+    if (pos <= 1) {
+        head = head->next;
+        delete temp;
+        return;
+    }
+
+    for (int i = 1; i < pos - 1 && temp->next != NULL; i++)
+        temp = temp->next;
+
+    if (temp->next == NULL) {
+        cout << "Invalid position.\n";
+        return;
+    }
+
+    Node* del = temp->next;
+    temp->next = del->next;
+    delete del;
+}
+
+void reverseList() {
+    Node *prev = NULL, *curr = head, *nextNode;
+
+    while (curr != NULL) {
+        nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
+    }
+    head = prev;
+}
+
+void concatenate(Node* other) {
+    if (other == NULL) return;
+
+    if (head == NULL) {
+        head = other;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+
+    temp->next = other;
+}
+
+void display() {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data << " -> ";
+        temp = temp->next;
+    }
+    cout << "NULL\n";
+}
+
+int main() {
+    int choice, value, pos;
+
+    do {
+        cout << "\n1. Insert\n2. Delete\n3. Reverse";
+        cout << "\n4. Concatenate another list\n5. Display\n0. Exit";
+        cout << "\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value and position: ";
+                cin >> value >> pos;
+                insertAtPosition(value, pos);
+                break;
+
+            case 2:
+                cout << "Enter position: ";
+                cin >> pos;
+                deleteAtPosition(pos);
+                break;
+
+            case 3:
+                reverseList();
+                cout << "List reversed.\n";
+                break;
+
+            case 4: {
+                int n, x;
+                Node *other = NULL, *tail = NULL;
+
+                cout << "Number of nodes in second list: ";
+                cin >> n;
+
+                for (int i = 0; i < n; i++) {
+                    cout << "Enter value: ";
+                    cin >> x;
+                    Node* node = new Node{x, NULL};
+
+                    if (other == NULL)
+                        other = tail = node;
+                    else {
+                        tail->next = node;
+                        tail = node;
+                    }
+                }
+                concatenate(other);
+                break;
+            }
+
+            case 5:
+                display();
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
