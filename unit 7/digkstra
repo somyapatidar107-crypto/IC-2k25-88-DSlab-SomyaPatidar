@@ -1,0 +1,80 @@
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+using namespace std;
+
+int main() {
+    int n, e;
+
+    cout << "Enter number of vertices and edges: ";
+    cin >> n >> e;
+
+    vector<vector<pair<int, int>>> adj(n);
+
+    cout << "Enter edges (u v weight):\n";
+
+    for (int i = 0; i < e; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+
+        if (u < 0 || u >= n || v < 0 || v >= n || w < 0) {
+            cout << "Invalid edge. Use valid vertices and non-negative weights.\n";
+            i--;
+            continue;
+        }
+
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+
+    int source;
+    cout << "Enter source vertex: ";
+    cin >> source;
+
+    if (source < 0 || source >= n) {
+        cout << "Invalid source.\n";
+        return 0;
+    }
+
+    vector<int> dist(n, INT_MAX);
+
+    priority_queue<pair<int, int>,
+                   vector<pair<int, int>>,
+                   greater<pair<int, int>>> pq;
+
+    dist[source] = 0;
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+        int d = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+
+        if (d != dist[u]) continue;
+
+        for (auto edge : adj[u]) {
+            int v = edge.first;
+            int weight = edge.second;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+
+    cout << "\nShortest distances from " << source << ":\n";
+
+    for (int i = 0; i < n; i++) {
+        cout << "Vertex " << i << ": ";
+
+        if (dist[i] == INT_MAX)
+            cout << "Unreachable\n";
+        else
+            cout << dist[i] << endl;
+    }
+
+    return 0;
+}
