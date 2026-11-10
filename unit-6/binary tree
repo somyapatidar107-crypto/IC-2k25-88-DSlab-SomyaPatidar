@@ -1,0 +1,142 @@
+
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left, *right;
+
+    Node(int value) {
+        data = value;
+        left = right = NULL;
+    }
+};
+
+Node* createTree() {
+    int value;
+    cout << "Enter value (-1 for no node): ";
+    cin >> value;
+
+    if (value == -1)
+        return NULL;
+
+    Node* root = new Node(value);
+
+    cout << "Left child of " << value << ":\n";
+    root->left = createTree();
+
+    cout << "Right child of " << value << ":\n";
+    root->right = createTree();
+
+    return root;
+}
+
+void preorderRecursive(Node* root) {
+    if (root == NULL) return;
+
+    cout << root->data << " ";
+    preorderRecursive(root->left);
+    preorderRecursive(root->right);
+}
+
+void inorderRecursive(Node* root) {
+    if (root == NULL) return;
+
+    inorderRecursive(root->left);
+    cout << root->data << " ";
+    inorderRecursive(root->right);
+}
+
+void postorderRecursive(Node* root) {
+    if (root == NULL) return;
+
+    postorderRecursive(root->left);
+    postorderRecursive(root->right);
+    cout << root->data << " ";
+}
+
+void preorderIterative(Node* root) {
+    if (!root) return;
+
+    stack<Node*> s;
+    s.push(root);
+
+    while (!s.empty()) {
+        Node* temp = s.top();
+        s.pop();
+
+        cout << temp->data << " ";
+
+        if (temp->right) s.push(temp->right);
+        if (temp->left) s.push(temp->left);
+    }
+}
+
+void inorderIterative(Node* root) {
+    stack<Node*> s;
+    Node* current = root;
+
+    while (current || !s.empty()) {
+        while (current) {
+            s.push(current);
+            current = current->left;
+        }
+
+        current = s.top();
+        s.pop();
+
+        cout << current->data << " ";
+        current = current->right;
+    }
+}
+
+void postorderIterative(Node* root) {
+    if (!root) return;
+
+    stack<Node*> s1, s2;
+    s1.push(root);
+
+    while (!s1.empty()) {
+        Node* temp = s1.top();
+        s1.pop();
+        s2.push(temp);
+
+        if (temp->left) s1.push(temp->left);
+        if (temp->right) s1.push(temp->right);
+    }
+
+    while (!s2.empty()) {
+        cout << s2.top()->data << " ";
+        s2.pop();
+    }
+}
+
+int main() {
+    cout << "Create Binary Tree:\n";
+    Node* root = createTree();
+
+    cout << "\nRecursive Traversals\n";
+    cout << "Preorder: ";
+    preorderRecursive(root);
+
+    cout << "\nInorder: ";
+    inorderRecursive(root);
+
+    cout << "\nPostorder: ";
+    postorderRecursive(root);
+
+    cout << "\n\nIterative Traversals\n";
+    cout << "Preorder: ";
+    preorderIterative(root);
+
+    cout << "\nInorder: ";
+    inorderIterative(root);
+
+    cout << "\nPostorder: ";
+    postorderIterative(root);
+
+    cout << endl;
+    return 0;
+}

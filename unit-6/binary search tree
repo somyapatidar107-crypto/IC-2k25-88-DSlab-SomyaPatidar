@@ -1,0 +1,157 @@
+
+#include <iostream>
+#include <climits>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left, *right;
+
+    Node(int value) {
+        data = value;
+        left = right = NULL;
+    }
+};
+
+Node* insert(Node* root, int value) {
+    if (root == NULL)
+        return new Node(value);
+
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+
+    return root;
+}
+
+bool search(Node* root, int value) {
+    if (root == NULL) return false;
+    if (root->data == value) return true;
+
+    if (value < root->data)
+        return search(root->left, value);
+
+    return search(root->right, value);
+}
+
+Node* findMin(Node* root) {
+    while (root && root->left)
+        root = root->left;
+
+    return root;
+}
+
+Node* findMax(Node* root) {
+    while (root && root->right)
+        root = root->right;
+
+    return root;
+}
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) return root;
+
+    if (value < root->data)
+        root->left = deleteNode(root->left, value);
+
+    else if (value > root->data)
+        root->right = deleteNode(root->right, value);
+
+    else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        }
+
+        if (root->right == NULL) {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+bool validateBST(Node* root, long long minValue, long long maxValue) {
+    if (root == NULL) return true;
+
+    if (root->data <= minValue || root->data >= maxValue)
+        return false;
+
+    return validateBST(root->left, minValue, root->data) &&
+           validateBST(root->right, root->data, maxValue);
+}
+
+void inorder(Node* root) {
+    if (root == NULL) return;
+
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
+
+int main() {
+    Node* root = NULL;
+    int choice, value;
+
+    do {
+        cout << "\n1. Insert\n2. Delete\n3. Search";
+        cout << "\n4. Find Minimum\n5. Find Maximum";
+        cout << "\n6. Display Inorder\n7. Validate BST";
+        cout << "\n0. Exit\nChoice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value: ";
+                cin >> value;
+                root = insert(root, value);
+                break;
+
+            case 2:
+                cout << "Enter value to delete: ";
+                cin >> value;
+                root = deleteNode(root, value);
+                break;
+
+            case 3:
+                cout << "Enter value to search: ";
+                cin >> value;
+                cout << (search(root, value) ? "Found\n" : "Not Found\n");
+                break;
+
+            case 4: {
+                Node* temp = findMin(root);
+                if (temp) cout << "Minimum: " << temp->data << endl;
+                else cout << "Tree is empty.\n";
+                break;
+            }
+
+            case 5: {
+                Node* temp = findMax(root);
+                if (temp) cout << "Maximum: " << temp->data << endl;
+                else cout << "Tree is empty.\n";
+                break;
+            }
+
+            case 6:
+                inorder(root);
+                cout << endl;
+                break;
+
+            case 7:
+                cout << (validateBST(root, LLONG_MIN, LLONG_MAX)
+                         ? "Valid BST\n" : "Invalid BST\n");
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}

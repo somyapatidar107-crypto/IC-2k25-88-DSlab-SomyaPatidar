@@ -1,0 +1,90 @@
+
+#include <iostream>
+using namespace std;
+
+struct Item {
+    int data;
+    int priority;
+};
+
+class PriorityQueue {
+    Item arr[100];
+    int size;
+
+public:
+    PriorityQueue() {
+        size = 0;
+    }
+
+    void enqueue(int value, int priority) {
+        if (size == 100) {
+            cout << "Priority Queue is full.\n";
+            return;
+        }
+
+        arr[size++] = {value, priority};
+        cout << "Inserted.\n";
+    }
+
+    void dequeue() {
+        if (size == 0) {
+            cout << "Priority Queue is empty.\n";
+            return;
+        }
+
+        int highest = 0;
+
+        for (int i = 1; i < size; i++) {
+            if (arr[i].priority < arr[highest].priority)
+                highest = i;
+        }
+
+        cout << "Deleted: " << arr[highest].data << endl;
+
+        for (int i = highest; i < size - 1; i++)
+            arr[i] = arr[i + 1];
+
+        size--;
+    }
+
+    void display() {
+        if (size == 0) {
+            cout << "Queue is empty.\n";
+            return;
+        }
+
+        for (int i = 0; i < size; i++)
+            cout << "Value: " << arr[i].data
+                 << " Priority: " << arr[i].priority << endl;
+    }
+};
+
+int main() {
+    PriorityQueue q;
+    int choice, value, priority;
+
+    do {
+        cout << "\n1. Insert\n2. Delete Highest Priority";
+        cout << "\n3. Display\n0. Exit";
+        cout << "\nEnter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value and priority: ";
+                cin >> value >> priority;
+                q.enqueue(value, priority);
+                break;
+
+            case 2:
+                q.dequeue();
+                break;
+
+            case 3:
+                q.display();
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}

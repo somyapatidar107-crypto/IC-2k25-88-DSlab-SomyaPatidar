@@ -1,0 +1,87 @@
+
+#include <iostream>
+#include <stack>
+#include <string>
+using namespace std;
+
+stack<string> undoStack;
+stack<string> redoStack;
+string text = "";
+
+void addText(string newText) {
+    undoStack.push(text);
+    text += newText;
+
+    while (!redoStack.empty())
+        redoStack.pop();
+
+    cout << "Text added.\n";
+}
+
+void undo() {
+    if (undoStack.empty()) {
+        cout << "Nothing to undo.\n";
+        return;
+    }
+
+    redoStack.push(text);
+    text = undoStack.top();
+    undoStack.pop();
+
+    cout << "Undo successful.\n";
+}
+
+void redo() {
+    if (redoStack.empty()) {
+        cout << "Nothing to redo.\n";
+        return;
+    }
+
+    undoStack.push(text);
+    text = redoStack.top();
+    redoStack.pop();
+
+    cout << "Redo successful.\n";
+}
+
+void display() {
+    cout << "\nCurrent Text: " << text << endl;
+}
+
+int main() {
+    int choice;
+    string input;
+
+    do {
+        cout << "\n1. Add Text";
+        cout << "\n2. Undo";
+        cout << "\n3. Redo";
+        cout << "\n4. Display Text";
+        cout << "\n0. Exit";
+        cout << "\nEnter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                cout << "Enter text to add: ";
+                getline(cin, input);
+                addText(input);
+                break;
+
+            case 2:
+                undo();
+                break;
+
+            case 3:
+                redo();
+                break;
+
+            case 4:
+                display();
+                break;
+        }
+    } while (choice != 0);
+
+    return 0;
+}
